@@ -21,23 +21,33 @@ class MyApp extends StatelessWidget {
   }
 }
 
-Stream<String> getTime() => Stream.periodic(
-      const Duration(seconds: 1),
-      (_) => DateTime.now().toIso8601String(),
-    );
-
 class MyHomePage extends HookWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final dateTime = useStream(
-      getTime(),
-      initialData: DateTime.now().toIso8601String(),
-    );
+    final controller = useTextEditingController();
+    var text = useState('');
+    useEffect(() {
+      controller.addListener(() {
+        text.value = controller.text;
+      });
+      return null;
+    }, [controller]);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(dateTime.data!),
+        title: Text(''),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            TextFormField(
+              controller: controller,
+            ),
+            Text('You typed: ${text.value}'),
+          ],
+        ),
       ),
     );
   }
