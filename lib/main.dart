@@ -89,57 +89,26 @@ class MyHomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final store = useReducer<State, Action?>(
-      reducer,
-      initialState: const State.zero(),
-      initialAction: null,
-    );
+    final state = useAppLifecycleState();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hooks demo'),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () => store.dispatch(Action.rotateLeft),
-                    child: Text('Rotate Left'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => store.dispatch(Action.rotateRight),
-                    child: Text('Rotate Right'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => store.dispatch(Action.moreVisible),
-                    child: Text('Increase Opacity'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => store.dispatch(Action.lessVisible),
-                    child: Text('Decrease Opacity'),
-                  ),
-                ],
-              ),
+        child: Opacity(
+          opacity: state == AppLifecycleState.resumed ? 1.0 :  0.0,
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 10,
+                  color: Colors.black.withAlpha(100),
+                  spreadRadius: 10,
+                )
+              ],
             ),
-            const SizedBox(
-              height: 150,
-            ),
-            Opacity(
-              opacity: store.state.alpha,
-              child: RotationTransition(
-                turns: AlwaysStoppedAnimation(
-                  store.state.rotationDeg / 360.0,
-                ),
-                child: Center(
-                  child: Image.network(imageUrl),
-                ),
-              ),
-            ),
-          ],
+            child: Image.asset('assets/visa.webp'),
+          ),
         ),
       ),
     );
